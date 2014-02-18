@@ -1,0 +1,91 @@
+
+\documentclass[runningheads,a4paper]{llncs}
+%\documentclass{llncs}
+%
+
+\usepackage{llncsdoc}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage[utf8x]{inputenc}
+
+\usepackage{url}
+%\usepackage{moreverb}
+\usepackage{verbatim}
+\usepackage{enumerate}
+\usepackage{listings}
+%\usepackage{fancyvrb}
+%\usepackage[table]{xcolor} % to use cellcolor
+\usepackage{xspace}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{multirow}
+\usepackage{xcolor}
+
+
+\renewenvironment{description}[1][0pt]
+  {\list{}{\labelwidth=0pt \leftmargin=#1
+   \let\makelabel\descriptionlabel}}
+  {\endlist}
+
+\newcommand{\tth}{\texttt{ttH\_dilep}\xspace}
+\newcommand{\ttDilepKinFit}{\texttt{ttDilepKinFit}\xspace}
+\newcommand{\ttLoop}{\texttt{Loop}\xspace}
+\newcommand{\ttDoCuts}{\texttt{DoCuts}\xspace}
+\newcommand{\dilep}{\texttt{dilep}\xspace}
+\newcommand{\ttbar}{$t\bar{t}$\xspace}
+
+\begin{document}
+
+\title{Removing Inefficiencies From Scientific Code: A Case Of The ATLAS Experiment 
+\thanks{Detalhes financiamento...}}
+
+%\end{comment}
+
+
+\titlerunning{Removing Inefficiencies From Scientific Code}
+
+% the name(s) of the author(s) follow(s) next
+%
+% NB: Chinese authors should write their first names(s) in front of
+% their surnames. This ensures that the names appear correctly in
+% the running heads and the author index.
+%
+\author{André Pereira\inst{1,2} \and Alberto Proença\inst{1} \and \\ António Onofre \inst{1,2}}
+%
+\authorrunning{Pereira, Proença, and Onofre}
+% (feature abused for this document to repeat the title also on left hand pages)
+
+% the affiliations are given next; don't give your e-mail address
+% unless you accept that it will be published
+\institute{Universidade do Minho, Portugal \and LIP-Minho, Portugal 
+\\ \{ampereira, aproenca\}@di.uminho.pt, antonio.onofre@cern.ch}
+
+
+\maketitle              % typeset the title of the contribution
+%\thispagestyle{empty}
+%\pagestyle{empty}
+
+\begin{abstract}
+
+This paper presents a set of methods and techniques for removing inefficiencies in scientific code. A scientific application, of the ATLAS experiment, is used as a case study. Here, we implement and test a set of optimizations to deal with performance inefficiencies in a organized approach: identification, removal at application development and at application runtime. These optimizations consider code, algorithm and data structure design, parallelization in shared memory systems, and runtime configurations for NUMA environments. These optimizations target different multithreading and multiprocess combinations, and CPU affinities. We expect that this communication will aid scientists to become more aware of common efficiency pitfalls in scientific code.
+
+\keywords{High Performance Computing, Efficiency Optimization}
+\end{abstract}
+%
+
+\input{./chapters/introduction}
+\input{./chapters/problem_and_app}
+\input{./chapters/identification}
+\input{./chapters/removal}
+\input{./chapters/conclusion}
+
+% Acknowledgements
+
+\paragraph{Acknowledgments:}
+
+
+\bibliographystyle{splncs}
+\bibliography{my}
+
+
+\end{document}
