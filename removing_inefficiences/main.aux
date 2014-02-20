@@ -1,7 +1,7 @@
 \relax 
 \@writefile{toc}{\contentsline {title}{Removing Inefficiencies From Scientific Code: A Case Of The ATLAS Experiment \unskip {}}{1}}
 \@writefile{toc}{\authcount {3}}
-\@writefile{toc}{\contentsline {author}{Andr\IeC {\'e} Pereira\unskip {} \and Alberto Proen\IeC {\c c}a\unskip {} \and \unskip \ \ignorespaces  Ant\IeC {\'o}nio Onofre \unskip {}}{1}}
+\@writefile{toc}{\contentsline {author}{Andr\IeC {\'e} Pereira\unskip {} \and Ant\IeC {\'o}nio Onofre \unskip {} \and \unskip \ \ignorespaces  Alberto Proen\IeC {\c c}a\unskip {}}{1}}
 \@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}}
 \newlabel{introduction}{{1}{1}}
 \@writefile{toc}{\contentsline {section}{\numberline {2}Top Quark and Higgs Decay}{2}}
@@ -11,28 +11,32 @@
 \newlabel{fig:ttbar}{{1}{3}}
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Schematic representation for the \texttt  {ttH\_dilep}\xspace  application flow.}}{4}}
 \newlabel{fig:flow}{{2}{4}}
-\@writefile{toc}{\contentsline {section}{\numberline {3}Identification and Removal of Code Inefficiencies}{4}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Code an Algorithm Inefficiencies}{4}}
 \newlabel{identification}{{3}{4}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}First Iteration}{5}}
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Relative execution time of the critical sections of the \texttt  {ttH\_dilep}\xspace  application.}}{5}}
 \newlabel{fig:ttDilepKinFit}{{3}{5}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Schematic representation for the \texttt  {ttH\_dilep}\xspace  application flow.}}{5}}
-\newlabel{fig:PRNG}{{4}{5}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Second Iteration}{6}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Third Iteration}{6}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Pseudo-Random Number Generation Inefficiencies}{5}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Callgraph subset of the \texttt  {ttDilepKinFit}\xspace  most time consuming sections for 256 variations per combination.}}{6}}
+\newlabel{fig:prng256}{{4}{6}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Data Structure Inefficiencies}{6}}
 \@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Schematic representation of the \texttt  {ttDilepKinFit}\xspace  sequential (left) and parallel (right) workflows.}}{7}}
 \newlabel{fig:SeqPipeline}{{5}{7}}
 \@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Speedup for \texttt  {ttH\_dilep}\xspace  parallel non-pointer version application.}}{7}}
 \newlabel{fig:non_pointer_speedup}{{6}{7}}
 \@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Speedup for \texttt  {ttH\_dilep}\xspace  parallel pointer version application.}}{8}}
 \newlabel{fig:pointer_speedup}{{7}{8}}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Identification and Removal of Runtime Inefficiencies}{8}}
-\newlabel{removal}{{4}{8}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}First Iteration}{8}}
-\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Schematic representation of the \texttt  {ttDilepKinFit}\xspace  sequential (left) and parallel (right) workflows.}}{9}}
-\newlabel{fig:Sched}{{8}{9}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Runtime Inefficiencies}{9}}
+\newlabel{removal}{{4}{9}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Multithreading Inefficiencies}{9}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Core Affinity Inefficiencies}{9}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Schematic representation of dispatcher workflow.}}{10}}
+\newlabel{fig:sched_flow}{{8}{10}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Filler.}}{10}}
+\newlabel{fig:Sched}{{9}{10}}
 \bibstyle{splncs}
 \bibdata{my}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusion}{10}}
-\newlabel{conclusion}{{5}{10}}
-\@writefile{toc}{\contentsline {paragraph}{Acknowledgments:}{10}}
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Speedup of the \texttt  {ttH\_dilep}\xspace  parallel pointer implementation with affinity \textit  {vs} no affinity.}}{11}}
+\newlabel{fig:pointer_aff}{{10}{11}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusion}{11}}
+\newlabel{conclusion}{{5}{11}}
+\@writefile{toc}{\contentsline {paragraph}{Acknowledgments:}{11}}
