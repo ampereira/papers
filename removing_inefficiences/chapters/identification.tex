@@ -1,52 +1,40 @@
-\section{Code an Algorithm Inefficiencies}
+\section{Coding Inefficiencies}
 \label{identification}
 
-Inefficiency removal is a two stage iterative process. First, the application is analysed to identify the critical sections of the code that take the most time to compute. This can process can be automatised by using third party tools, such as GPROF, Callgrind, or VTune, which produce reports listing the percentage of time spent in each of the application functions. A more detailed analysis can be obtained using tools similar to PAPI, where hardware counters are measured to obtain cache miss rates, float point instructions, and other low level information.
+Inefficiency removal is a two stage iterative process, where bottlenecks are identified and later removed. First, the application is profiled and analysed to identify the critical sections of the code that take longer to compute. Then, the critical section is optimized by modifying the code, algorithm, or parallelization. The identification of critical sections can be automated by using third party tools, such as gprof, Callgrind, or VTune, which produce reports listing the percentage of time spent in each of the application functions. A more detailed analysis can be obtained using tools similar to PAPI, where hardware counters are used to quantify cache miss rates, executed floating point instructions, and other low level information.
 
-The test environment used in both this section and section \ref{removal} is a dual-socket system with two Intel E5-2670v2 with 10 cores (20 hardware threads) at 2.5 GHz each, 256 KB L2 cache per core and 25 MB shared L3 cache, coupled with 64 GB DDR3 RAM. The KBest policy was adopted to ensure that the only the best, but consistent, time measurements are considered. A 5\% interval was used for a \textit{k} of 4, with a minimum of 12 and maximum of 24 time measurements.
+The test environment used in both this section and section \ref{removal} is a dual-socket system with two Intel Xeon E5-2670v2 with 10 cores, with hardware support for 20 simultaneous threads, at 2.5 GHz each, 256 KB L2 cache per core and 25 MB shared L3 cache, with 64 GB DDR3 RAM. The K-Best measurement heuristic was adopted to ensure that the only the best, but consistent, time measurements are considered. A 5\% interval was used for a \textit{k} of 4, with a minimum of 12 and maximum of 24 time measurements.
 
-In a preliminary analysis using Callgrind, the \ttDilepKinFit was identified as the most time consuming function, specially when considering a significant number of variations. Figure \ref{fig:ttDilepKinFit} shows the relative execution time for the \ttDilepKinFit, I/O of event loading, and the rest of the computations (the remaining cuts). \tth execution with 1024 variations was considered for all efficiency measurements, as it is a reasonable amount without an exaggerated compromise of the application execution time. Note that the application is dependant on the ROOT framework and LipMiniAnalysis library, which code cannot be modified.
+Profiling the data analysis code using Callgrind, the \ttDilepKinFit was identified as the most time consuming function, taking 99\% of the execution time for 1024 variations. \tth execution with this amount of variations was considered reasonable for all efficiency measurements unless stated otherwise, without compromising the application execution time.
 
-\begin{figure}[!htp]
-	\begin{center}
-		\includegraphics[scale=0.4]{charts/relative_exec_time_kinfit_rest.png}
-		\caption{Relative execution time of the critical sections of the \tth application.}
-		\label{fig:ttDilepKinFit}
-	\end{center}
-\end{figure}
+A preliminary computational analysis concluded that the application is compute bound on the testbed system, where accesses to the system RAM memory are not a limiting factor with a ratio of 7 instructions per fetched byte for 1024 variations.
 
-A preliminary computational analysis determined that the application is compute bound on the test system, where accesses to the system RAM memory are not a limiting factor with a ratio of 8 instructions per byte fetched for 512 variations.
+An analysis of the code showed two major inefficiencies restricting the performance. The pseudo-random number generation is consuming a large part of the \ttDilepKinFit execution time due to coding inefficiencies. Also, when planning the parallel version it was concluded that part of the event data was stored in a LipMiniAnalysis data structure, preventing the parallel processing of events. These two inefficiencies will be addressed in more detail through the next sections.
 
 \subsection{Pseudo-Random Number Generation Inefficiencies}
 
-Pseudo-random number generators (PRNGs) are common in many Monte Carlo simulation and reconstruction applications. A good PRNG deterministically generates uniform numbers with a long period, its values produced pass a set of randomness tests, and, in HPC, it must be efficient and scalable. Repeatability is ensured by providing a seed to the PRNG prior to number generation, due to their deterministic execution.
+Pseudo-random number generators (PRNGs) are common in many Monte Carlo simulation and reconstruction applications. A good PRNG deterministically generates uniform numbers with a long period, its produced values pass a set of randomness tests and, in HPC, it must be efficient and scalable. Repeatability is ensured by providing a seed to the PRNG prior to number generation, due to their deterministic execution.
 
-The variation for the kinematical and Higgs reconstructions is based on applying a random offset to the current particles characteristics. This offset has a maximum magnitude of 2\% of the original value and is determined by a PRNG. An analysis of the callgraph produced for 256 variations (higher variations made the Callgrind execution time infeasible) revealed that 63\% of \tth execution time was spent on the PRNG. However, 23\% of the time was spent on setting the seed for the PRNG. Figure \ref{fig:prng256} presents the callgraph for the \ttDilepKinFit function of \tth.
+The variation for the kinematical and Higgs reconstructions is based on applying a random offset to the current particles characteristics. This offset has a maximum magnitude of $\pm1\%$ of the original value and is computed by a PRNG. An analysis of the callgraph produced for 256 variations (higher variations made the Callgrind execution time infeasible) showed that 63\% of \tth execution time was spent on the PRNG. However, 23\% of the time was spent defining a new seed for the PRNG. Figure \ref{fig:prng256} presents the callgraph for the \ttDilepKinFit function of \tth.
 
 \begin{figure}[!htp]
 	\begin{center}
-		\includegraphics[scale=0.33]{images/prng_256.png}
+		\includegraphics[scale=0.5]{images/prng_256_edited.png}
 		\caption{Callgraph subset of the \ttDilepKinFit most time consuming sections for 256 variations per combination.}
 		\label{fig:prng256}
 	\end{center}
 \end{figure}
 
-An analysis of the code revealed that the application uses a PRNG available in ROOT, which uses the Mersenne Twister algorithm, resetting the seed in every variation. The Mersenne Twister period is approximately $4.3 * 10^{6001}$, while the maximum amount of pseudo random numbers generated by the application, for the input file used and 512 variations, is $1.5 * 10^9$, making the seed reset unnecessary. The removal of this inefficiency granted an increase of 71\% in performance for 1024 variations.
-
-%\begin{figure}[!htp]
-%	\begin{center}
-%		\includegraphics[scale=0.4]{charts/speedup_trandom_optim.png}
-%		\caption{Schematic representation for the \tth application flow.}
-%		\label{fig:PRNG}
-%	\end{center}
-%\end{figure}
+An analysis of the code showed that the application uses a PRNG available in ROOT, which uses the Mersenne Twister algorithm, resetting the seed for every parameter variation. The Mersenne Twister period is approximately $4.3 * 10^{6001}$, while the maximum amount of pseudo random numbers generated by the application, for the input file used and 512 variations, is $1.5 * 10^9$, making the seed reset unnecessary. The removal of this inefficiency granted a 71\% performance improvement, for 1024 variations.
 
 \subsection{Data Structure Inefficiencies}
 \label{data_inef}
 
-Even with the PRNG optimization the \ttDilepKinFit remains the critical region in the application. An analysis of the functions code revealed that there are no relevant code inefficiencies left, so the next step is to parallelize \ttDilepKinFit. Note that it is not possible to parallelize the whole event processing since only one is loaded at a time and part of its information is stored in LipMiniAnalysis library, which we did not have permission to refactor. Besides not allowing this parallelization, reading events individually is more inefficient than reading all events at once, where in the former slower random reads are made on the hard drive and in the latter the fast sequential reads are used.
+Once removed the PRNG seed reset inefficiency, the \ttDilepKinFit still remained the critical region in the application, with no apparent code inefficiency. The most obvious solution is to process in parallel several events from the same input file. However, the function in LipMiniAnalysis that loads events from a file into memory assigns a single global space. This data structure contains information that is modified during the event reconstruction process, and it is overwritten for every event loaded. Changing the data structure to support multiple events in memory simultaneously, and loading all events in the input file at the beginning of the data analysis, would allow for a parallelization of the event processing, with a very small overhead. However, as mentioned in section \ref{problem_and_app} many data analysis applications depend on LipMiniAnalysis preventing any modifications to its structure, so alternative solutions were explored.
 
-\subsubsection*{Optimization Approaches}
+Next step to improve the code execution time is to parallelize \ttDilepKinFit. Note that it is not possible to parallelize the whole event processing since only one is loaded at a time and part of its information is stored in LipMiniAnalysis library. Besides not allowing this parallelization, reading events individually is more inefficient than reading all events at once, where in the former slower random reads are made on the hard drive and in the latter the fast sequential reads are used.
+
+\subsubsection{Optimization Approaches}
 
 Parallelizing \ttDilepKinFit implies modifying its flow. Currently, the data of each variation is overwritten when processing each different combination of an event, so a data structure holding all combinations of the event is necessary. Picking a lepton/jet combination depends on all previous combinations chosen, which serializes the construction of the data structure. Each parallel task (indivisible work segment) selects a combination with variations still to compute, then varies the particles parameters, performs the kinematical reconstruction, and attempts to reconstruct the Higgs boson. A parallel merge is performed after all combinations are computed to get the most accurate reconstruction for the event. Figure \ref{fig:SeqPipeline} presents the sequential and parallel workflow for \ttDilepKinFit.
 
@@ -54,7 +42,7 @@ Parallelizing \ttDilepKinFit implies modifying its flow. Currently, the data of 
 	\begin{center}
 		\raisebox{-0.5\height}{\includegraphics[scale=0.5]{images/sequential_kinfit.png}}
 		\raisebox{-0.5\height}{\includegraphics[scale=0.5]{images/parallel_kinfit.png}}
-		\caption{Schematic representation of the \ttDilepKinFit sequential (left) and parallel (right) workflows.}
+		\caption{Schematic representation of the \ttDilepKinFit workflows: sequential (left) and parallel (right).}
 		\label{fig:SeqPipeline}
 	\end{center}
 \end{figure}
@@ -63,26 +51,26 @@ A shared memory parallelization using OpenMP was devised, as it is the bes appro
 
 \begin{figure}[!htp]
 	\begin{center}
-		\includegraphics[scale=0.4]{charts/speedup_non_pointer_omp.png}
-		\caption{Speedup for \tth parallel non-pointer version application.}
+		\includegraphics[scale=0.55]{charts/speedup_non_pointer_omp.png}
+		\caption{Speedup for the \tth original parallel version of the application.}
 		\label{fig:non_pointer_speedup}
 	\end{center}
 \end{figure}
 
-Figure \ref{fig:non_pointer_speedup} presents the speedups for various variations and threads. The purpose of the 1 thread test is to evaluate the parallelization overhead. The application has a constant scaling up to 64 variations but tends to stabilize for more variations. The best efficiency occurs when using 2 and 4 threads, where the application is almost using all resources from the cores used. The best overall performance occurs for 40 threads, but it only offers a speedup of 8.8, underusing the available 20 physical cores. Note that there is no significant overhead due to NUMA accesses, as seen by the constant increase in performance from 10 to 16 threads.
+Figure \ref{fig:non_pointer_speedup} presents the speedups for various variations and threads. The purpose of the 1 thread test is to evaluate the parallelization overhead. The application has a constant scaling up to 64 variations but tends to stabilize for more variations. The best efficiency occurs when using 2 and 4 threads, where the application is almost using all resources from the cores used. The best overall performance occurs for 40 threads, but it only offers a speedup of 8.8, underusing the available 20 physical cores. Note that there is no significant overhead due to NUMA\footnote{NUMA, Non-Unified Memory Access, since each Xeon device has its own memory controller with attached RAM: RAM access time for each core differs as the RAM is connected to the same device or the neighbour Xeon.} accesses, as seen by the constant increase in performance from 10 to 16 threads.
 
 % ------------- pointer version abaixo -----------------
 
-The lack of performance means that there are still inefficiencies on the application, probably caused by the parallelization overhead. Intel's VTune was used to search for hotspots (bottlenecks) on the parallel \tth, since this tool is best suited for profiling parallel applications while providing an easy to use GUI. A preliminary analysis revealed that the application was spending around 20\% of the time building the combination data structure for 256 variations.
+The lack of scalability beyond a low number of parallel threads suggests that inefficiencies may still affect the application, probably caused by the parallelization overhead. Intel's VTune was used to search for hotspots (bottlenecks) on the parallel \tth, since this tool is best suited for profiling parallel applications while providing a user friendly graphic interface. A preliminary analysis showed that the application was spending 20\% of the execution time building the combination data structure for 256 variations.
 
-An analysis of the data structure code revealed that there were inefficiencies that were affecting the performance in specific situations. Data that is read-only on the parallel section is being replicated in each element of the data structure. If the elements were to share a pointer to such data, the overhead of constructing the data structure would be reduced. However, this could lead to worse cache management, due to cache line invalidations proportional to the number of threads, resulting in added overhead, specifically in NUMA environments where the communication cost is increased. Nevertheless, this optimization was implemented and tested (addressed as \textit{pointer version}), with its speedups presented in figure \ref{fig:pointer_speedup}.
+An analysis of the coded data structure showed that inefficiencies were affecting the performance in specific situations. Data that is read-only on the parallel section is being replicated in each element of the data structure. If the elements were to share a pointer to such data, the overhead of constructing the data structure would be reduced. However, this could lead to worse cache management, due to cache line invalidations proportional to the number of threads, resulting in added overhead, specifically in NUMA environments where the communication cost is increased. Nevertheless, this optimization was implemented and tested (addressed as \textit{pointer version}), with its speedups ploted in figure \ref{fig:pointer_speedup}. The reference value for the speedup computation is still the same sequential version.
 
 \begin{figure}[!htp]
 	\begin{center}
-		\includegraphics[scale=0.4]{charts/speedup_pointer_omp.png}
+		\includegraphics[scale=0.55]{charts/speedup_pointer_omp.png}
 		\caption{Speedup for \tth parallel pointer version application.}
 		\label{fig:pointer_speedup}
 	\end{center}
 \end{figure}
 
-As predicted, the best speedup occurs when using only one CPU device, specifically for 8 threads. Even with 10 threads the performance of the application suffers due to the increase of concurrent accesses to the L3 cache on the system due to the shared data. This decrease in performance is even more noticeable when using both CPU devices, where the non-pointer version still scales while this version performance is worse than with one CPU device. However, this implementation is more efficient than the former when using only one device. Note that the superlinear speedups is due to the reduction in the data that each thread has to process, making it suitable to be stored in the private L2 cache of each core, avoiding the slower accesses to L3 cache.
+As predicted, the best speedup occurs when using only one CPU device, namely for 8 threads. Even with 10 threads the performance of the application suffers due to the increase of concurrent accesses to the shared L3 cache on the device. This decrease in performance is even more noticeable when using both CPU devices, where the non-pointer version still scales while this version performance is worse than using a single CPU device. However, this implementation is more efficient than the former when using only one device. Note that the superlinear speedups is due to the reduction in the data that each thread has to process, making it suitable to be stored in the private L2 cache of each core, avoiding the slower accesses to the L3 cache.

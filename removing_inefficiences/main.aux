@@ -1,43 +1,44 @@
 \relax 
-\@writefile{toc}{\contentsline {title}{Removing Inefficiencies From Scientific Code: A Case Of The ATLAS Experiment}{1}}
+\@writefile{toc}{\contentsline {title}{Removing Inefficiencies from Scientific Code: the Study of the Higgs Boson Couplings to Top Quarks}{1}}
 \@writefile{toc}{\authcount {3}}
 \@writefile{toc}{\contentsline {author}{Andr\IeC {\'e} Pereira\unskip {} \and Ant\IeC {\'o}nio Onofre \unskip {} \and \unskip \ \ignorespaces  Alberto Proen\IeC {\c c}a\unskip {}}{1}}
 \@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}}
 \newlabel{introduction}{{1}{1}}
-\@writefile{toc}{\contentsline {section}{\numberline {2}Top Quark and Higgs Decay}{2}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Top Quark and Higgs Boson Decay}{2}}
 \newlabel{problem_and_app}{{2}{2}}
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Schematic representation of the $t\mathaccentV {bar}016{t}$\xspace  system and Higgs boson decay.}}{3}}
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
 \newlabel{fig:ttbar}{{1}{3}}
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Schematic representation for the \texttt  {ttH\_dilep}\xspace  application flow.}}{4}}
 \newlabel{fig:flow}{{2}{4}}
-\@writefile{toc}{\contentsline {section}{\numberline {3}Code an Algorithm Inefficiencies}{4}}
-\newlabel{identification}{{3}{4}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Relative execution time of the critical sections of the \texttt  {ttH\_dilep}\xspace  application.}}{5}}
-\newlabel{fig:ttDilepKinFit}{{3}{5}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Coding Inefficiencies}{5}}
+\newlabel{identification}{{3}{5}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Pseudo-Random Number Generation Inefficiencies}{5}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Callgraph subset of the \texttt  {ttDilepKinFit}\xspace  most time consuming sections for 256 variations per combination.}}{6}}
-\newlabel{fig:prng256}{{4}{6}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Callgraph subset of the \texttt  {ttDilepKinFit}\xspace  most time consuming sections for 256 variations per combination.}}{6}}
+\newlabel{fig:prng256}{{3}{6}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Data Structure Inefficiencies}{6}}
 \newlabel{data_inef}{{3.2}{6}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Schematic representation of the \texttt  {ttDilepKinFit}\xspace  sequential (left) and parallel (right) workflows.}}{7}}
-\newlabel{fig:SeqPipeline}{{5}{7}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Speedup for \texttt  {ttH\_dilep}\xspace  parallel non-pointer version application.}}{7}}
-\newlabel{fig:non_pointer_speedup}{{6}{7}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Speedup for \texttt  {ttH\_dilep}\xspace  parallel pointer version application.}}{8}}
-\newlabel{fig:pointer_speedup}{{7}{8}}
+\@writefile{toc}{\contentsline {subsubsection}{Optimization Approaches}{7}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Schematic representation of the \texttt  {ttDilepKinFit}\xspace  workflows: sequential (left) and parallel (right).}}{7}}
+\newlabel{fig:SeqPipeline}{{4}{7}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Speedup for the \texttt  {ttH\_dilep}\xspace  original parallel version of the application.}}{8}}
+\newlabel{fig:non_pointer_speedup}{{5}{8}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Speedup for \texttt  {ttH\_dilep}\xspace  parallel pointer version application.}}{9}}
+\newlabel{fig:pointer_speedup}{{6}{9}}
 \@writefile{toc}{\contentsline {section}{\numberline {4}Runtime Inefficiencies}{9}}
 \newlabel{removal}{{4}{9}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Multithreading Inefficiencies}{9}}
-\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Schematic representation of dispatcher workflow.}}{10}}
-\newlabel{fig:sched_flow}{{8}{10}}
-\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Speedups for the scheduler with 2, 4, 5, 8, and 10 processes with various thread configurations.}}{10}}
-\newlabel{fig:Sched}{{9}{10}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Schematic representation of dispatcher workflow.}}{10}}
+\newlabel{fig:sched_flow}{{7}{10}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Speedups for the scheduler with the pointer based implementation for 2, 4, 5, 8, and 10 processes and various threads per process.}}{11}}
+\newlabel{fig:Sched}{{8}{11}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Core Affinity Inefficiencies}{11}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Speedup of the \texttt  {ttH\_dilep}\xspace  parallel pointer implementation with core affinity.}}{12}}
+\newlabel{fig:pointer_aff}{{9}{12}}
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Speedups of the scheduler with the pointer based implementation for 512 (left) and 1024 (right) variations and various threads per process with core affinity.}}{13}}
+\newlabel{fig:sched_aff}{{10}{13}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusion}{13}}
+\newlabel{conclusion}{{5}{13}}
 \bibstyle{splncs}
 \bibdata{my}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Core Affinity Inefficiencies}{11}}
-\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Speedup of the \texttt  {ttH\_dilep}\xspace  parallel pointer implementation with affinity \textit  {vs} no affinity.}}{11}}
-\newlabel{fig:pointer_aff}{{10}{11}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusion}{12}}
-\newlabel{conclusion}{{5}{12}}
-\@writefile{toc}{\contentsline {paragraph}{Acknowledgments:}{12}}
+\@writefile{toc}{\contentsline {paragraph}{Acknowledgments:}{14}}

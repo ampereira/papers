@@ -1,50 +1,67 @@
 \section{Runtime Inefficiencies}
 \label{removal}
 
-The identification and removal of inefficiencies follows the same iterative approach presented in section \ref{identification}.
+When submitting a job or application for execution on a given computing system, most users trust the default configurations of the submission environment. However, if the user needs to improve the efficiency of the code execution, he/she must be aware of the environment variables that can be controlled and how those can impair the performance. Two cases will be addressed here: (i) how to spread the code parallelism, between processes and threads, and (ii) how to allocate the available cores on each device to threads and processes.
 
 \subsection{Multithreading Inefficiencies}
 
-Without the sensibility provided by the tests in section \ref{identification}, a scientist would incur in the pitfall of using all available cores (and even all hardware threads) on the system, hoping that it would provide the best performance. While it may be true for the non-pointer implementation,the system computational resources would be used inefficiently, and using the single device highly efficient pointer implementation would induce a even greater waste.
+Without the sensibility provided by the tests in section \ref{identification}, a scientist would incur in the pitfall of using all available cores on the system (and even all hardware threads, if each core supports hardware multithreading), hoping that it would provide the best performance. While it may be true for the non-pointer implementation, the system computational resources would be inefficiently used, and using the single device highly efficient pointer implementation would induce a even greater waste.
 
-A closer look to the pointer implementation is needed since it is the most efficient. As seen in section \ref{data_inef}, the scalability of the parallelization is restricted by the NUMA memory accesses required by the shared memory. If the threads on $cpu_1$ do not share information with the threads on $cpu_2$ the bottleneck is removed, which can be achieved by using multithreaded processes. An MPI paralllelization at the event level is impossible by the reasons referred in section \ref{data_inef}.
+A closer look to the pointer based implementation shows in fact that it is the most efficient one. As seen in section \ref{data_inef}, the scalability of the parallelization is limited by the NUMA organization on modern multiple CPU device systems. If the threads on $cpu_1$ do not share information with the threads on $cpu_2$, the NUMA bottleneck is removed by using multithreaded processes. However, parallelization at the process level, where each process performs a data analysis on a separate event, is not possible with the current implementation of LipMiniAnalysis, where a single global state is allocated to store data from each event processing.
 
-Analysis applications are executed individually for each file (around 1GB in size) in a huge set of files, usually reaching the terabyte scale, received from CERN each week. An alternative approach to the MPI parallelization is to balance the execution of different \tth processes in the system on a set of input files. This reduces the complexity of the implementation, with no changes needed for \tth, and avoids communication between processes. A simple scheduler was devised, which takes a set of input files and creates a given amount of \tth processes. It is then responsible for dispatching the files to the different processes in a queue-like approach, and monitor their execution, as shown in figure \ref{fig:sched_flow}. A set of 20 input files was considered for testing purposes, with different configurations of processes and threads per process.
+Data analysis applications are individually executed for each file (around 1GB in size) in a very large set of files, at a terabyte scale, received weekly from CERN. An alternative approach to the process parallelization over a single input data file is to balance the execution of different \tth processes in the system on a set of distinct input files. This reduces the complexity of the implementation, with no changes needed for \tth, and avoids communication between processes. A simple scheduler was devised, which takes a set of input files and spawns a given amount of \tth processes. The scheduler dispatches the files to the different processes in a queue-like approach, and monitor their execution as shown in figure \ref{fig:sched_flow}. A set of 20 input files was considered for testing and evaluation purposes, with different configurations of processes and threads per process.
 
 \begin{figure}[!htp]
 	\begin{center}
-		\includegraphics[scale=0.4]{images/scheduler_workflow.png}
+		\includegraphics[scale=0.5]{images/scheduler_workflow.png}
 		\caption{Schematic representation of dispatcher workflow.}
 		\label{fig:sched_flow}
 	\end{center}
 \end{figure}
 
-Figure \ref{fig:Sched} presents the speedups using 2, 4, 5, 8, and 10 processes for various thread configurations, with maximum number of threads was limited to 40. The best speedups occur for 8 processes with 5 threads each, with a peak of 55.6, 6 and 10 times better than the non-pointer and pointer implementations, respectively. A small number of threads such as this allows for a small overhead in the \tth parallelization, namely on load balancing and final best reconstruction merge for each event. A common behaviour is that when using the CPU devices hardware multithreading the speedups tend to stabilize, or even drop in the case of 2, 4, and 5 processes.
+Figure \ref{fig:Sched} presents the speedups using 2, 4, 5, 8, and 10 processes for various thread configurations, with maximum number of threads limited to 40. A higher amount of processes was not tested as the efficiency decayed from 8 to 10 processes. The best speedups occur for 8 processes with 5 threads each, with a peak of 69.3, 7.8 and 11.7 times better than the best non-pointer and pointer implementations, respectively. A small number of threads such as this allows for a small overhead in the \tth parallelization, namely on load balancing and final best reconstruction merge for each event. For 10 processes the load on the system due to the lack of shared memory and I/O operations affects the performance, decreasing the speedups relatively to using 8 processes. A common behaviour is that when using the CPU devices hardware multithreading the speedups tend to stabilize, or even drop in the case of 2, 4, and 5 processes.
 
 \begin{figure}[!htp]
 	\begin{center}
-		\includegraphics[scale=0.6]{images/sequential_kinfit.png}
-		\caption{Speedups for the scheduler with 2, 4, 5, 8, and 10 processes with various thread configurations.}
+		\includegraphics[scale=0.5]{charts/speedup_sched.png}
+		\caption{Speedups for the scheduler with the pointer based implementation for 2, 4, 5, 8, and 10 processes and various threads per process.}
 		\label{fig:Sched}
 	\end{center}
 \end{figure}
 
 \subsection{Core Affinity Inefficiencies}
 
-The final possible optimization at runtime regards the thread affinity, i.e., control to which CPU cores a given thread is allocated. By default OpenMP allows for the Operating System to manage thread affinity, allowing for threads to be changed between cores during runtime. If a thread is running on core $c_1$ and it is moved to core $c_2$, all the data on the private cache $l_{c_1}$ needs to be reloaded to cache $l_{c_2}$, causing unnecessary overhead. This effect is amplified if the threads are moved between CPU devices. When multiple different, and possibly parallelized, processes are running on the same system, which is common in production environments, occurrences of bad scheduling occur more often.
+The key issue in runtime efficiency is the thread affinity, namely to, control the allocation of each thread to which CPU core. By default, OpenMP lets the operating system to manage the thread affinity; as consequence, threads may migrate among cores during runtime. If a thread is running on core $c_1$ and moves to core $c_2$, all data on the private cache $l_{c_1}$ needs to be reloaded to cache $l_{c_2}$, causing unnecessary overhead. This effect is amplified if the threads are moved between adjacent CPU devices. When multiple different, and (possibly) parallel processes are running on the same system, which is common in production environments, such scheduling occurrences happen more often.
 
-Defining the thread affinity of an application may provide a more constant, or in some cases better, performance. In theory, an optimum thread affinity scheme allocates the threads to contiguous physical cores of one CPU device, uses the cores of the second CPU device only after the first is filled, and finally uses the multithreading after filling all physical cores. Note that using multithreading before the second CPU device may provide better performance in memory bound applications. This type of affinity must be defined prior to the application execution and depends on the system used. In this case the affinity was specifically tuned to this system for all threads, or process/threads configuration for the scheduler.
+Defining the thread affinity of an application may provide a more predictable, or in some cases better, performance. In theory, an optimum thread affinity scheme allocates the threads to contiguous physical cores of one CPU device, uses the cores of the second CPU device only after the first is filled, and finally uses the multithreading after filling all physical cores. Note that using multithreading before the second CPU device is fully occupied may provide better performance in memory bound applications. This type of affinity must be defined prior to the application execution and depends on the system used. In this data analysis case the affinity was specifically tuned to this 20-core system for all threads or process/threads configurations for the scheduler.
 
 \begin{figure}[!htp]
 	\begin{center}
-		\includegraphics[scale=0.4]{charts/speedup_pointer_aff.png}
-		\caption{Speedup of the \tth parallel pointer implementation with affinity \textit{vs} no affinity.}
+		\includegraphics[scale=0.55]{charts/speedup_pointer_aff.png}
+		\caption{Speedup of the \tth parallel pointer implementation with core affinity.}
 		\label{fig:pointer_aff}
 	\end{center}
 \end{figure}
 
-By analysing the speedups of the pointer implementation of \tth with thread affinity, in figure \ref{fig:pointer_aff}, it is concluded that specifying the affinity is provides speedups for the previous most efficient number of threads, i.e., up to 8 threads. For 8 threads the performance increases by 41\%, relative to its no affinity counterpart. With this number of threads, and the amount of shared data, moving threads between cores at runtime causes more cache warm ups to occur, significantly affecting the performance. When using more than 10 threads the application is roughly 4\% slower as the Operating System uses some multithreaded cores rather than using all available physical cores and it does a better job at managing the multithreading.
+By analysing the speedups of the pointer implementation of \tth with thread affinity, in figure \ref{fig:pointer_aff}, the specification of the affinity provides speedups for the previous most efficient number of threads, i.e., up to 8 threads. For 8 threads the performance increases by 41\%, relative to its no affinity counterpart. With this number of threads, and the amount of shared data, moving threads between cores at runtime causes more cache warm ups to occur, significantly affecting the performance. When using more than 10 threads the application is roughly 4\% slower as the operating system uses some multithreaded cores rather than using all available physical cores and it does a better job at managing the multithreading.
 
-MELHORIA DE PERFORMANCE SCHEDULER
+The same affinity study was performed on the scheduler for 512 and 1024 variations per combination, with their speedups presented in figure \ref{fig:sched_aff}. For 1024 variations the performance is increased for specific configurations, only diminishing the performance of 5 processes, peaking at 52\%, 90\%, 8\%, and 25\% for 2, 4, 8, and 10 processes respectively. For 512 variations the improvement is more constant but smaller, peaking at 72\%, 28\%, 37\%, 11\%, and 5\% for 2, 4, 5, 8, and 10 processes respectively. There are only few cases that the performance is worse.
 
-MELHORIA DE PERFORMANCE OVERALL
+\begin{figure}[!htp]
+	\begin{center}
+		\raisebox{-0.5\height}{\includegraphics[scale=0.378]{charts/speedup_sched_aff_512.png}}
+		\raisebox{-0.5\height}{\includegraphics[scale=0.378]{charts/speedup_sched_aff_1024.png}}
+		\caption{Speedups of the scheduler with the pointer based implementation for 512 (left) and 1024 (right) variations and various threads per process with core affinity.}
+		\label{fig:sched_aff}
+	\end{center}
+\end{figure}
+
+The performance with core affinity is less susceptible to oscillations, as with no affinity it is sometimes affected by OS thread reallocations. It is when the reallocations occur that setting the core affinity provides the best performance. Otherwise it does not allow to use multithreading (unless it is in the scheme) for hiding the memory accesses latency, affecting the performance. For 512 variations, the applications execution time is smaller meaning that the impact from thread reallocations is higher, benefiting from setting the core affinity. It is not possible to use a theoretical affinity scheme for always improving the performance on every system, as it is highly dependent on:
+
+\begin{itemize}
+	\item The algorithm, as memory bound algorithms suffer more from core reallocation due to the losing all data on cache, where fixing their position on a specific core avoids unnecessary accesses to the RAM;
+	\item The application execution time, as the impact from thread reallocations is higher in faster applications;
+	\item The operating system, as OpenMP, by default, lets it manage the thread allocation and it is susceptible to the overall system load, causing fluctuations in consecutive applications execution time.
+\end{itemize}
+
+With all optimizations considered, the best overall performance in a dual 10-core Xeon system is obtained using the scheduler combined with the pointer implementation, with 8 multithreaded processes (with 5 threads each), reaching a speedup of 113 over the original sequential application.
