@@ -92,4 +92,11 @@ Ott, D.:
 \newblock {Optimizing Applications for NUMA}.
 \newblock Technical report (February 2011)
 
+\bibitem{StarPU}
+Augonnet, C., Thibault, S., Namyst, R., Wacrenier, P.A.:
+\newblock Starpu: A unified platform for task scheduling on heterogeneous
+  multicore architectures.
+\newblock Concurr. Comput. : Pract. Exper. \textbf{23}(2) (February 2011)
+  187--198
+
 \end{thebibliography}

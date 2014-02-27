@@ -6,52 +6,52 @@ Database file #1: my.bib
 Warning--entry type for "ROOT" isn't style-file defined
 --line 33 of file my.bib
 Warning--entry type for "Callgrind" isn't style-file defined
---line 41 of file my.bib
+--line 52 of file my.bib
 Warning--entry type for "MKL" isn't style-file defined
---line 49 of file my.bib
+--line 60 of file my.bib
 Warning--empty institution in Intel:VTune
 Warning--empty institution in Intel:e5v2
 Warning--empty institution in OpenMP
 Warning--empty institution in NUMA
-You've used 17 entries,
+You've used 18 entries,
             2087 wiz_defined-function locations,
-            578 strings with 6022 characters,
-and the built_in function-call counts, 2989 in all, are:
-= -- 254
-> -- 143
-< -- 2
-+ -- 57
-- -- 40
-* -- 201
-:= -- 481
-add.period$ -- 14
-call.type$ -- 17
-change.case$ -- 23
+            585 strings with 6250 characters,
+and the built_in function-call counts, 3363 in all, are:
+= -- 292
+> -- 157
+< -- 3
++ -- 62
+- -- 44
+* -- 233
+:= -- 529
+add.period$ -- 15
+call.type$ -- 18
+change.case$ -- 24
 chr.to.int$ -- 0
-cite$ -- 21
-duplicate$ -- 151
-empty$ -- 306
-format.name$ -- 40
-if$ -- 672
+cite$ -- 22
+duplicate$ -- 170
+empty$ -- 336
+format.name$ -- 44
+if$ -- 760
 int.to.chr$ -- 0
-int.to.str$ -- 17
-missing$ -- 7
-newline$ -- 85
-num.names$ -- 17
-pop$ -- 58
+int.to.str$ -- 18
+missing$ -- 8
+newline$ -- 90
+num.names$ -- 18
+pop$ -- 59
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 74
+skip$ -- 89
 stack$ -- 0
-substring$ -- 47
-swap$ -- 41
-text.length$ -- 2
+substring$ -- 79
+swap$ -- 54
+text.length$ -- 3
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 4
-while$ -- 22
-width$ -- 19
-write$ -- 173
+while$ -- 26
+width$ -- 20
+write$ -- 185
 (There were 7 warnings)
