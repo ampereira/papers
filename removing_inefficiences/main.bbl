@@ -1,3 +1,95 @@
-\begin{thebibliography}{}
+\begin{thebibliography}{10}
+
+\bibitem{LIP:Ibergrid}
+Oliveira, V., Pina, A., Castro, N., Veloso, F., Onofre, A.:
+\newblock {Even Bigger Data: Preparing for the LHC/ATLAS Upgrade}.
+\newblock 6th Iberian Grid Infrastructure Conference (2012)
+
+\bibitem{Msc:AMP}
+Pereira, A.:
+\newblock {Efficient Processing of ATLAS Events Analysis in Homogeneous and
+  Heterogeneous Platforms}.
+\newblock Master's thesis, University of Minho (September 2013)
+
+\bibitem{Higgs}
+Aad, G.,  et~al.:
+\newblock {Observation of a new particle in the search for the Standard Model
+  Higgs boson with the ATLAS detector at the LHC}.
+\newblock Phys.Lett. \textbf{B716} (2012)  1--29
+
+\bibitem{ROOT}
+{F. Rademakers and P. Canal and B. Bellenot and O. Couet and A. Naumann and G.
+  Ganis and L. Moneta and V. Vasilev and A. Gheata and P. Russo and R. Brun}:
+\newblock R{OOT} (November 2012)
+
+\bibitem{GPROF}
+Graham, S.L., Kessler, P.B., Mckusick, M.K.:
+\newblock {Gprof: A Call Graph Execution Profiler}.
+\newblock SIGPLAN Not. \textbf{17}(6) (June 1982)  120--126
+
+\bibitem{Callgrind}
+Developers, V.:
+\newblock {Callgrind: a call-graph generating cache and branch prediction
+  profiler} (January 2013)
+
+\bibitem{Intel:VTune}
+Intel:
+\newblock {Profiling Runtime Generated and Interpreted Code with Intel VTune
+  Amplifier}.
+\newblock Technical report (January 2013)
+
+\bibitem{PAPI}
+Browne, S., Deane, C., Ho, G., Muccima, P.:
+\newblock {PAPI: A Portable Interface to Hardware Performance Counters}.
+\newblock Proceedings of Department of Defense HPCMP Users Group Conference
+  (June 1999)
+
+\bibitem{Intel:e5v2}
+Intel:
+\newblock {Intel Xeon Processor E5 v2 Family: Datasheet}.
+\newblock Technical report (September 2013)
+
+\bibitem{MersenneTwister}
+Matsumoto, M., Saito, M.:
+\newblock {Mersenne Twister: A 623-dimensionally equidistributed uniform
+  pseudorandom number generator}.
+\newblock ACM Transactions on Modeling and Computer Simulations: Special Issue
+  on Uniform Random Number Generation (1998)
+
+\bibitem{OpenMP}
+Board, O.A.R.:
+\newblock {OpenMP Application Program Interface}.
+\newblock Technical report (July 2013)
+
+\bibitem{Affinity}
+Dow, E.:
+\newblock {Take charge of processor affinity}.
+\newblock IBM developerWorks (September 2005)
+
+\bibitem{MKL}
+Corporation, I.:
+\newblock {Intel Math Kernel Library} (January 2013)
+
+\bibitem{BLAS}
+Blackford, L.S., Demmel, J., Dongarra, J., Duff, I., Hammarling, S., Henry, G.,
+  Heroux, M., Kaufman, L., Lumsdaine, A., Petitet, A., Pozo, R., Remington, K.,
+  Whaley, R.C.:
+\newblock {An Updated Set of Basic Linear Algebra Subprograms (BLAS)}.
+\newblock ACM Trans. Math. Soft., 28-2 (2002)
+
+\bibitem{Intel:Optimization}
+Corporation, I.:
+\newblock {Intel 64 and IA-32 Architectures Optimization Reference Manual}.
+\newblock Technical report, Intel Corporation (2013)
+
+\bibitem{Intel:DevOptimization}
+Corporation, I.:
+\newblock {Intel 64 and IA-32 Architectures Software Developer’s Manual}.
+\newblock Technical report, Intel Corporation (February 2014)
+
+\bibitem{NUMA}
+Ott, D.:
+\newblock {Optimizing Applications for NUMA}.
+\newblock Technical report (February 2011)
 
 \end{thebibliography}
